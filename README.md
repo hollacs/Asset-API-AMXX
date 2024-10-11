@@ -116,7 +116,7 @@ new g_spr;
 public asset_OnParseJson(JSON:json, const name[])
 {
     if (!equal(name, "test")) return;
-        g_spr = asset_toString(Asset_Model, json, "spr");
+    g_spr = asset_toString(Asset_Model, json, "spr");
 }
 ```
 
