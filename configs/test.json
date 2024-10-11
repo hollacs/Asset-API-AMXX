@@ -1,0 +1,6 @@
+{
+    "spk": ["sound/hostage/hos1.wav", "sound/hostage/hos2.wav", "sound/hostage/hos3.wav"],
+    "emit": "scientist/scream1.wav",
+    "playermodel": "vip",
+    "v_knife": "models/v_knife_r.mdl"
+}
