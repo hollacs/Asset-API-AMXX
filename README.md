@@ -3,11 +3,16 @@
 需求: AMXX 1.9 或以上
 
 這是跟我之前發佈的 Asset Manager 差不多的功能, 但之前的設計有些缺憾和搞得太複雜, 所以我重做了一個非OO的版本
+
 簡單來說這就是一個 JSON 的 API 方便來讀取遊戲的資源檔案位置給插件使用 避免寫死在插件
 
+
 asset_api.inc 放在 scripting/include
+
 asset_api.sma 需要加在 plugins.ini
+
 asset_api_test.sma 是測試插件
+
 configs/test.json 是測試用的JSON
 
 `#include <asset_api>` 來使用
