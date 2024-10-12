@@ -127,15 +127,15 @@ public asset_OnParseJson(JSON:json, const name[])
 ---
 
 假如你的東西在JSON是寫了在一個物件裡面, 像這樣:
-[code]
+```sourcepawn
 {
        "object" : {
               "test_model" : "models/head.mdl"
        }
 }
-[/code]
+```
 
 因為支援 dot notation, 所以你可以這樣寫
-[code]
+```sourcepawn
 asset_toString(Asset_Model, json, "object.test_model", g_testModel, charsmax(g_testModel));
-[/code]
+```
