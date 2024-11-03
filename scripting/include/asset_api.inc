@@ -83,6 +83,13 @@ stock asset_toString(
 		
 		return asset_precache(type, defaultFile, useValveFs);
 	}
+
+	if (length < 1)
+	{
+		static str[64];
+		json_object_get_string(json, key, str, charsmax(str), dotNotation);
+		return asset_precache(type, str, useValveFs);
+	}
 	
 	json_object_get_string(json, key, string, length, dotNotation);
 	return asset_precache(type, string, useValveFs);
