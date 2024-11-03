@@ -24,7 +24,7 @@ enum AssetType
  * 會在使用 asset_loadJson 或 asset_passJson 時被呼叫
  *
  * @param json 			JSON 物件
- * @param name 			名字
+ * @param name 			識別名字
  * @param filePath 		檔案位置
  * 
  * @noreturn
@@ -34,7 +34,7 @@ forward asset_OnParseJson(JSON:json, const name[], const filePath[]);
 /*
  * 載入 JSON
  *
- * @param name 			用以分類的名字
+ * @param name 			用以識別的名字
  * @param filePath 		要讀取的檔案位置
  * @param relativePath 	如果是 true 使相對的位置 (amxmodx/configs) 否則將使用絕對位置
  * 
@@ -48,7 +48,7 @@ native asset_loadJson(const name[], const filePath[], bool:relativePath=true);
  * @note 當你不想用 asset_loadJson 來幫你載入 json 就用這個
  *
  * @param json 			JSON 物件
- * @param name 			用以分類的名字
+ * @param name 			用以識別的名字
  * @param filePath 		檔案位置 (可留空)
  * 
  * @noreturn
