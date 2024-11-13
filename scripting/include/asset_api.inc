@@ -11,72 +11,69 @@
 //#define SPK_RANDOM(%0,%1) if (%1) { ARRAY_RANDOM_STR(%1,sound[64]); SPK_SOUND(%0,sound); }
 //#define EMIT_SOUND_RANDOM(%0,%1,%2,%3,%4,%5,%6) if (%2) { ARRAY_RANDOM_STR(%2,sound[64]); emit_sound(%0,%1,sound,%3,%4,%5,%6); }
 
-// 遊戲資源類型
+// Game Resource Type
 enum AssetType
 {
-	Asset_Model, 		// 模組 (例如: .mdl, .spr)
-	Asset_Sound, 		// 音效 (例如: .wav)
-	Asset_Generic, 		// 通用 (例如: .wav, .mp3, .txt, ...)
-	Asset_PlayerModel 	// 玩家模型
+	Asset_Model, 		// Model (exmaple: .mdl, .spr)
+	Asset_Sound, 		// Sound (exmaple: .wav)
+	Asset_Generic, 		// Generic (exmaple: .wav, .mp3, .txt, ...)
+	Asset_PlayerModel 	// Player Model
 };
 
 /*
- * 會在使用 asset_loadJson 或 asset_passJson 時被呼叫
+ * called when using asset_loadJson or asset_passJson
  *
- * @param json 			JSON 物件
- * @param name 			識別名字
- * @param filePath 		檔案位置
+ * @param json 			JSON object
+ * @param name 			name to identify
+ * @param filePath 		file path
  * 
  * @noreturn
  */
 forward asset_OnParseJson(JSON:json, const name[], const filePath[]);
 
 /*
- * 載入 JSON
+ * Load JSON
  *
- * @param name 			用以識別的名字
- * @param filePath 		要讀取的檔案位置
- * @param relativePath 	如果是 true 使相對的位置 (amxmodx/configs) 否則將使用絕對位置
+ * @param name 			name to identify
+ * @param filePath 		file path
+ * @param relativePath 	if true use relativepath (amxmodx/configs) oterwise use absolute path
  * 
- * @return				0 代表載入失敗, 1 代表載入成功
+ * @return				0 is fail, 1 is success
  */
 native asset_loadJson(const name[], const filePath[], bool:relativePath=true);
 
 /*
- * 傳遞 JSON 物件到 asset_OnParseJson (forward 會被呼叫一次)
+ * Pass JSON object to asset_OnParseJson (forward will be called once)
  *
- * @note 當你不想用 asset_loadJson 來幫你載入 json 就用這個
+ * @note use this if you your json object isn't a file or you have already loaded before.
  *
- * @param json 			JSON 物件
- * @param name 			用以識別的名字
- * @param filePath 		檔案位置 (可留空)
+ * @param json 			JSON object
+ * @param name 			name to identify
+ * @param filePath 		file path (can be empty)
  * 
  * @noreturn
  */
 native asset_passJson(JSON:json, const name[], const filePath[]="");
 
 /*
- * 讀取 JSON 物件的遊戲資源到字串 (會自動預載)
+ * Read JSON object to a string (precache automatcally)
  *
- * @param type 			遊戲資源的類型
- * @param json 			JSON 物件
- * @param key 			要被讀取的鍵值
- * @param string 		輸出到的字串陣列
- * @param length		字串長度
- * @param defaultFile 	當 JSON 物件沒有讀取到東西就使用這個檔案 (可留空)
- * @param dotNotation 	JSON 使用 dot notation
- * @param useValveFs 	使用 valve 的檔案系統 (意思是包含 valve/ 裡面的檔案)
+ * @param type 			resource type
+ * @param json 			JSON object
+ * @param key 			key in json
+ * @param string 		string output
+ * @param length		string length
+ * @param defaultFile 	if JSON read nothings, use this file (can be empty)
+ * @param dotNotation 	JSON uses dot notation
+ * @param useValveFs 	use valve file system (means includes file in the valve/ folder)
  * 
- * @return 				回傳 precache 的 id (0 為失敗)
+ * @return 				precache id (-1 = failure)
  */
 stock asset_toString(
 	AssetType:type, JSON:json, const key[], string[]="", length=0, 
 	const defaultFile[]="", bool:dotNotation=true, bool:useValveFs=true)
 {
-	if (json == Invalid_JSON)
-		return 0;
-
-	if (!json_object_has_value(json, key, JSONString, dotNotation))
+	if (json == Invalid_JSON || !json_object_has_value(json, key, JSONString, dotNotation))
 	{
 		if (defaultFile[0])
 			copy(string, length, defaultFile);
@@ -96,28 +93,25 @@ stock asset_toString(
 }
 
 /*
- * 讀取 JSON 物件的遊戲資源到動態陣列 (會自動預載)
+ * Read JSON to a cellarray (precache automatcally)
  *
- * @param type 			遊戲資源的類型
- * @param json 			JSON 物件
- * @param key 			要被讀取的鍵值
- * @param stringLength	字串長度 (ArrayCreate)
- * @param defaultFile 	當 JSON 物件沒有讀取到東西就使用這個檔案 (可留空)
- * @param dotNotation 	JSON 使用 dot notation
- * @param useValveFs 	使用 valve 的檔案系統 (意思是包含 valve/ 裡面的檔案)
+ * @param type 			resource type
+ * @param json 			JSON object
+ * @param key 			key in json
+ * @param stringLength	string length (ArrayCreate)
+ * @param defaultFile 	if JSON reads nothing, use this file (can be empty)
+ * @param dotNotation 	JSON uses dot notation
+ * @param useValveFs 	use valve file system (means includes file in the valve/ folder)
  * 
- * @return 				回傳 Array: 的 handle
+ * @return 			 	Array: handle
  */
 stock Array:asset_toArray(
 	AssetType:type, JSON:json, const key[], stringLength,
 	const defaultFile[]="", bool:dotNotation=true, bool:useValveFs=true)
 {
-	if (json == Invalid_JSON)
-		return Invalid_Array;
-
 	new Array:aArray = ArrayCreate(stringLength);
 
-	if (!json_object_has_value(json, key, JSONArray, dotNotation))
+	if (json == Invalid_JSON || !json_object_has_value(json, key, JSONArray, dotNotation))
 	{
 		if (defaultFile[0])
 		{
@@ -139,7 +133,7 @@ stock Array:asset_toArray(
 	{
 		json_array_get_string(jArray, i, file, charsmax(file));
 
-		if (asset_precache(type, file, useValveFs))
+		if (asset_precache(type, file, useValveFs) != -1)
 			ArrayPushString(aArray, file);
 	}
 	json_free(jArray);
@@ -151,18 +145,18 @@ stock Array:asset_toArray(
 }
 
 /*
- * 預載遊戲資源
+ * precache game resource
  *
- * @param type 			遊戲資源的類型
- * @param file			檔案位置
- * @param useValveFs 	使用 valve 的檔案系統 (意思是包含 valve/ 裡面的檔案)
+ * @param type 			resource type
+ * @param file			file path
+ * @param useValveFs 	use valve file system (means includes file in the valve/ folder)
  * 
- * @return 				回傳 precache 的 id
+ * @return 				precache id
  */
 stock asset_precache(AssetType:type, const file[], bool:useValveFs=true)
 {
 	if (!file[0])
-		return 0;
+		return -1;
 
 	static path[96];
 	if (type == Asset_PlayerModel)
@@ -180,7 +174,7 @@ stock asset_precache(AssetType:type, const file[], bool:useValveFs=true)
 	{
 		static const typeNames[AssetType][] = {"model", "sound", "generic", "playermodel"};
 		log_amx("precache(%s): file '%s' not exist", typeNames[type], path);
-		return 0;
+		return -1;
 	}
 
 	switch (type)
@@ -193,5 +187,5 @@ stock asset_precache(AssetType:type, const file[], bool:useValveFs=true)
 			return precache_generic(path);
 	}
 
-	return 0;
+	return -1;
 }
