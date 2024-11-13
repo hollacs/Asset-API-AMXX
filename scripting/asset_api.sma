@@ -42,6 +42,9 @@ public native_loadJson()
 		get_string(argPath, filePath, charsmax(filePath));
 	}
 
+	static name[64];
+	get_string(argName, name, charsmax(name));
+
 	static ret;
 	if (!file_exists(filePath))
 	{
@@ -57,9 +60,6 @@ public native_loadJson()
 		log_amx("invalid json file '%s'", filePath);
 		return 0;
 	}
-
-	static name[64];
-	get_string(argName, name, charsmax(name));
 
 	ExecuteForward(g_fwParseJson, ret, json, name, filePath);
 
