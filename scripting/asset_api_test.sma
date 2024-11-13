@@ -14,11 +14,11 @@ new g_sprDisk;
 public plugin_precache()
 {
 	// 載入 JSON
-	// 若載入失敗它也會至少以 Invalid_JSON 來呼叫一次 asset_OnParseJson 來預載預設的資源檔案
+	// 若載入失敗它也會至少以 Invalid_JSON 來呼叫一次 asset_OnHandleJson 來預載預設的資源檔案
 	asset_loadJson("test", "test.json")
 }
 
-public asset_OnParseJson(JSON:json, const name[])
+public asset_OnHandleJson(JSON:json, const name[])
 {
 	// 檢查識別的名字
 	if (!equal(name, "test")) return;

@@ -34,7 +34,7 @@ public plugin_precache()
 }
 
 // 載入的處理
-public asset_OnParseJson(JSON:json, const name[])
+public asset_OnHandleJson(JSON:json, const name[])
 {
        if (!equal(name, "test")) return;
 
@@ -113,7 +113,7 @@ public OnKnifeDeploy_Post(ent)
 ```sourcepawn
 new g_spr;
 
-public asset_OnParseJson(JSON:json, const name[])
+public asset_OnHandleJson(JSON:json, const name[])
 {
     if (!equal(name, "test")) return;
     g_spr = asset_toString(Asset_Model, json, "spr");

@@ -8,7 +8,7 @@ new g_fwParseJson;
 
 public plugin_precache()
 {
-	g_fwParseJson = CreateMultiForward("asset_OnParseJson", ET_IGNORE, FP_CELL, FP_STRING, FP_STRING);
+	g_fwParseJson = CreateMultiForward("asset_OnHandleJson", ET_IGNORE, FP_CELL, FP_STRING, FP_STRING);
 }
 
 public plugin_init()

@@ -29,7 +29,7 @@ enum AssetType
  * 
  * @noreturn
  */
-forward asset_OnParseJson(JSON:json, const name[], const filePath[]);
+forward asset_OnHandleJson(JSON:json, const name[], const filePath[]);
 
 /*
  * Load JSON
@@ -43,7 +43,7 @@ forward asset_OnParseJson(JSON:json, const name[], const filePath[]);
 native asset_loadJson(const name[], const filePath[], bool:relativePath=true);
 
 /*
- * Pass JSON object to asset_OnParseJson (forward will be called once)
+ * Pass JSON object to asset_OnHandleJson (forward will be called once)
  *
  * @note use this if you your json object isn't a file or you have already loaded before.
  *
