@@ -2,7 +2,7 @@
 #include <amxmisc>
 #include <json>
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 new g_fwParseJson;
 
@@ -42,8 +42,10 @@ public native_loadJson()
 		get_string(argPath, filePath, charsmax(filePath));
 	}
 
+	static ret;
 	if (!file_exists(filePath))
 	{
+		ExecuteForward(g_fwParseJson, ret, Invalid_JSON, name, filePath);
 		log_amx("file '%s' not exist", filePath);
 		return 0;
 	}
@@ -51,6 +53,7 @@ public native_loadJson()
 	new JSON:json = json_parse(filePath, true, true);
 	if (json == Invalid_JSON)
 	{
+		ExecuteForward(g_fwParseJson, ret, Invalid_JSON, name, filePath);
 		log_amx("invalid json file '%s'", filePath);
 		return 0;
 	}
@@ -58,7 +61,6 @@ public native_loadJson()
 	static name[64];
 	get_string(argName, name, charsmax(name));
 
-	static ret;
 	ExecuteForward(g_fwParseJson, ret, json, name, filePath);
 
 	json_free(json);
