@@ -1,18 +1,21 @@
 # Asset API AMXX
 
-需求: AMXX 1.9 或以上
+**Requirement**: AMXX 1.9 or higher
 
-這是跟我之前發佈的 Asset Manager 差不多的功能, 但之前的設計有些缺憾和搞得太複雜, 所以我重做了一個非OO的版本 <br>
-簡單來說這就是一個 JSON 的 API 方便來讀取遊戲的資源檔案位置給插件使用 避免寫死在插件
+This is a simplified, non-object-oriented version of the Asset Manager I previously released. The earlier design had some flaws and was overly complex, so I reworked it into this new API.  
+In short, this is a JSON-based API that allows plugins to easily read the locations of game resource files, avoiding hardcoding paths in plugins.
 
-asset_api.inc 放在 scripting/include<br>
-asset_api.sma 需要加在 plugins.ini<br>
-asset_api_test.sma 是測試插件<br>
-configs/test.json 是測試用的JSON<br>
+- `asset_api.inc` should be placed in `scripting/include`
+- `asset_api.sma` needs to be added to `plugins.ini`
+- `asset_api_test.sma` is a test plugin
+- `configs/test.json` is the JSON file for testing
 
-`#include <asset_api>` 來使用
+Use it by including:  
+```sourcepawn
+#include <asset_api>
+```
 
-使用範例:
+**Usage Example**:
 ```sourcepawn
 #include <amxmodx>
 #include <cstrike>
@@ -28,76 +31,76 @@ new g_knifeModel[64];
 
 public plugin_precache()
 {
-       // 載入 JSON
-       if (!asset_loadJson("test", "test.json"))
-              set_fail_state("failed to load json file"); // 若載入失敗則停止插件
+    // Load JSON
+    if (!asset_loadJson("test", "test.json"))
+        set_fail_state("failed to load json file"); // Stop plugin if JSON loading fails
 }
 
-// 載入的處理
+// Handle JSON loading
 public asset_OnHandleJson(JSON:json, const name[])
 {
-       if (!equal(name, "test")) return;
+    if (!equal(name, "test")) return;
 
-       // 載入 spk 音效
-       g_soundSpk = asset_toArray(Asset_Generic, json, "spk", 64, 
-              .defaultFile="sound/events/enemy_died.wav");
+    // Load spk sound
+    g_soundSpk = asset_toArray(Asset_Generic, json, "spk", 64, 
+        .defaultFile="sound/events/enemy_died.wav");
 
-       // 載入 emit 音效
-       asset_toString(Asset_Sound, json, "emit", g_soundEmit, charsmax(g_soundEmit), 
-              .defaultFile="player/headshot1.wav");
+    // Load emit sound
+    asset_toString(Asset_Sound, json, "emit", g_soundEmit, charsmax(g_soundEmit), 
+        .defaultFile="player/headshot1.wav");
 
-       // 載入玩家模組
-       asset_toString(Asset_PlayerModel, json, "playermodel", g_playerModel, charsmax(g_playerModel), 
-              .defaultFile="terror");
+    // Load player model
+    asset_toString(Asset_PlayerModel, json, "playermodel", g_playerModel, charsmax(g_playerModel), 
+        .defaultFile="terror");
 
-       // 載入小刀模組
-       asset_toString(Asset_Model, json, "v_knife", g_knifeModel, charsmax(g_knifeModel), 
-              .defaultFile="models/v_knife.mdl");
+    // Load knife model
+    asset_toString(Asset_Model, json, "v_knife", g_knifeModel, charsmax(g_knifeModel), 
+        .defaultFile="models/v_knife.mdl");
 
-       // 因為 JSON 物件被傳遞了, 所以在這裡你還是可以對 json 做一般正常的處理
+    // Since the JSON object is passed, you can still perform regular JSON operations here
 }
 
 public plugin_init()
 {
-       register_plugin("Asset API Test", "0.1", "holla");
+    register_plugin("Asset API Test", "0.1", "holla");
 
-       register_clcmd("test_spk",        "CmdTestSpk");
-       register_clcmd("test_emit", "CmdTestEmit");
+    register_clcmd("test_spk", "CmdTestSpk");
+    register_clcmd("test_emit", "CmdTestEmit");
 
-       RegisterHam(Ham_Spawn,                      "player",               "OnPlayerSpawn_Post", 1);
-       RegisterHam(Ham_Item_Deploy,        "weapon_knife", "OnKnifeDeploy_Post", 1);
+    RegisterHam(Ham_Spawn, "player", "OnPlayerSpawn_Post", 1);
+    RegisterHam(Ham_Item_Deploy, "weapon_knife", "OnKnifeDeploy_Post", 1);
 }
 
 public CmdTestSpk()
 {
-       ARRAY_RANDOM_STR(g_soundSpk, sound[64]) // 獲得隨機音效
-       client_cmd(0, "spk %s", sound); // 用 spk 方式播放
+    ARRAY_RANDOM_STR(g_soundSpk, sound[64]) // Get random sound
+    client_cmd(0, "spk %s", sound); // Play sound using spk
 }
 
 public CmdTestEmit(id)
 {
-       // 用 emit_sound 播放音效在玩家身上
-       emit_sound(id, CHAN_AUTO, g_soundEmit, VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
+    // Play sound on player using emit_sound
+    emit_sound(id, CHAN_AUTO, g_soundEmit, VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
 }
 
 public OnPlayerSpawn_Post(id)
 {
-       if (!is_user_alive(id)) return;
+    if (!is_user_alive(id)) return;
 
-       cs_set_user_model(id, g_playerModel); // 改變玩家模組
+    cs_set_user_model(id, g_playerModel); // Change player model
 }
 
 public OnKnifeDeploy_Post(ent)
 {
-       if (!is_valid_ent(ent)) return;
+    if (!is_valid_ent(ent)) return;
 
-       new id = get_ent_data_entity(ent, "CBasePlayerItem", "m_pPlayer");
-       if (id)
-              entity_set_string(id, EV_SZ_viewmodel, g_knifeModel); // 改變小刀模組
+    new id = get_ent_data_entity(ent, "CBasePlayerItem", "m_pPlayer");
+    if (id)
+        entity_set_string(id, EV_SZ_viewmodel, g_knifeModel); // Change knife model
 }
 ```
 
-測試用的 JSON 設定檔:
+**Test JSON Configuration File**:
 ```json
 {
     "spk": ["sound/hostage/hos1.wav", "sound/hostage/hos2.wav", "sound/hostage/hos3.wav"],
@@ -109,7 +112,8 @@ public OnKnifeDeploy_Post(ent)
 
 ---
 
-另外如果是想用在 SVC_TEMPENTITY 的 SPR, 可以這樣寫
+**Using with SVC_TEMPENTITY SPR**:
+If you want to use it for SPR in SVC_TEMPENTITY, you can write it like this:
 ```sourcepawn
 new g_spr;
 
@@ -126,16 +130,17 @@ public asset_OnHandleJson(JSON:json, const name[])
 
 ---
 
-假如你的東西在JSON是寫了在一個物件裡面, 像這樣:
-```sourcepawn
+**Handling Nested JSON Objects**:  
+If your data is stored in a nested JSON object, like this:
+```json
 {
-       "object" : {
-              "test_model" : "models/head.mdl"
-       }
+    "object": {
+        "test_model": "models/head.mdl"
+    }
 }
 ```
 
-因為支援 dot notation, 所以你可以這樣寫
+Since dot notation is supported, you can write:
 ```sourcepawn
 asset_toString(Asset_Model, json, "object.test_model", g_testModel, charsmax(g_testModel));
 ```
